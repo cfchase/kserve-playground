@@ -11,7 +11,7 @@ import classes
 
 grpc_host = os.environ.get('GRPC_HOST', 'modelmesh-serving')
 grpc_port = int(os.environ.get('GRPC_PORT', '8033'))
-model_name = os.environ.get('MODEL_NAME', 'rps')
+model_name = os.environ.get('MODEL_NAME', 'resnet')
 channel = grpc.insecure_channel(f"{grpc_host}:{grpc_port}")
 stub = grpc_predict_v2_pb2_grpc.GRPCInferenceServiceStub(channel)
 
