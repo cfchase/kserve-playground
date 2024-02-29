@@ -1,0 +1,108 @@
+﻿---
+apiVersion: ray.io/v1
+kind: RayCluster
+metadata:
+  name: raycluster-codeflare
+  labels:
+    app.kubernetes.io/instance: raycluster
+    app.kubernetes.io/name: codeflare
+spec:
+  headGroupSpec:
+    rayStartParams:
+      dashboard-host: 0.0.0.0
+    serviceType: ClusterIP
+    template:
+      metadata:
+        annotations: {}
+        labels:
+          app.kubernetes.io/instance: raycluster
+          app.kubernetes.io/managed-by: Helm
+          app.kubernetes.io/name: codeflare
+          helm.sh/chart: ray-cluster-1.0.0
+      spec:
+        affinity: {}
+        containers:
+          - env: []
+            image: 'quay.io/project-codeflare/ray:latest-py39-cu118'
+            imagePullPolicy: IfNotPresent
+            name: ray-head
+            resources:
+              limits:
+                cpu: '1'
+                memory: 2G
+              requests:
+                cpu: '1'
+                memory: 2G
+            securityContext: {}
+            volumeMounts:
+              - mountPath: /tmp/ray
+                name: log-volume
+        imagePullSecrets: []
+        nodeSelector: {}
+        tolerations: []
+        volumes:
+          - emptyDir: {}
+            name: log-volume
+  workerGroupSpecs:
+    - groupName: workergroup
+      maxReplicas: 2147483647
+      minReplicas: 0
+      rayStartParams: {}
+      replicas: 1
+      template:
+        metadata:
+          annotations: {}
+          labels:
+            app.kubernetes.io/instance: raycluster
+            app.kubernetes.io/managed-by: Helm
+            app.kubernetes.io/name: codeflare
+            helm.sh/chart: ray-cluster-1.0.0
+        spec:
+          affinity: {}
+          containers:
+            - env: []
+              image: 'quay.io/project-codeflare/ray:latest-py39-cu118'
+              imagePullPolicy: IfNotPresent
+              name: ray-worker
+              resources:
+                limits:
+                  cpu: '1'
+                  memory: 1G
+                requests:
+                  cpu: '1'
+                  memory: 1G
+              securityContext: {}
+              volumeMounts:
+                - mountPath: /tmp/ray
+                  name: log-volume
+          imagePullSecrets: []
+          nodeSelector: {}
+          tolerations: []
+          volumes:
+            - emptyDir: {}
+              name: log-volume
+
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: dashboard-raycluster-codeflare
+  labels:
+    app.kubernetes.io/created-by: kuberay-operator
+    app.kubernetes.io/name: kuberay
+    ray.io/cluster: raycluster-kuberay
+    ray.io/identifier: raycluster-kuberay-head
+    ray.io/node-type: head
+  annotations:
+    openshift.io/host.generated: 'true'
+spec:
+  to:
+    kind: Service
+    name: raycluster-codeflare-head-svc
+    weight: 100
+  port:
+    targetPort: dashboard
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
