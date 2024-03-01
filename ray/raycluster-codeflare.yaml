@@ -23,6 +23,9 @@ spec:
         affinity: {}
         containers:
           - env: []
+            envFrom:
+              - secretRef:
+                  name: aws-connection-my-storage
             image: 'quay.io/project-codeflare/ray:latest-py39-cu118'
             imagePullPolicy: IfNotPresent
             name: ray-head
@@ -61,6 +64,9 @@ spec:
           affinity: {}
           containers:
             - env: []
+              envFrom:
+                - secretRef:
+                    name: aws-connection-my-storage
               image: 'quay.io/project-codeflare/ray:latest-py39-cu118'
               imagePullPolicy: IfNotPresent
               name: ray-worker
