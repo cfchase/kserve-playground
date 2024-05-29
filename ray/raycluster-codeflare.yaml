@@ -23,19 +23,16 @@ spec:
         affinity: {}
         containers:
           - env: []
-            envFrom:
-              - secretRef:
-                  name: aws-connection-my-storage
             image: 'quay.io/project-codeflare/ray:latest-py39-cu118'
             imagePullPolicy: IfNotPresent
             name: ray-head
             resources:
               limits:
-                cpu: '1'
-                memory: 2G
+                cpu: '6'
+                memory: 16G
               requests:
                 cpu: '1'
-                memory: 2G
+                memory: 4G
             securityContext: {}
             volumeMounts:
               - mountPath: /tmp/ray
@@ -51,7 +48,7 @@ spec:
       maxReplicas: 2147483647
       minReplicas: 0
       rayStartParams: {}
-      replicas: 1
+      replicas: 2
       template:
         metadata:
           annotations: {}
@@ -64,19 +61,16 @@ spec:
           affinity: {}
           containers:
             - env: []
-              envFrom:
-                - secretRef:
-                    name: aws-connection-my-storage
               image: 'quay.io/project-codeflare/ray:latest-py39-cu118'
               imagePullPolicy: IfNotPresent
               name: ray-worker
               resources:
                 limits:
-                  cpu: '1'
-                  memory: 1G
+                  cpu: '6'
+                  memory: 16G
                 requests:
                   cpu: '1'
-                  memory: 1G
+                  memory: 4G
               securityContext: {}
               volumeMounts:
                 - mountPath: /tmp/ray
